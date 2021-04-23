@@ -41,11 +41,4 @@ program
         new UpdateRecordSet(args[0] as UpdateRecordSetOptions); // Use first index in args array for options because there's no argument defined
     });
 
-program
-    .command(`create-cron`)
-    .description(`To be implemented`)
-    .action((...args: unknown[]) => {
-        console.log(`Not implemented yet`);
-    });
-
 program.parse(process.argv);
