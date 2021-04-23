@@ -38,10 +38,3 @@ npx simple-route53-ddns update-record-set -h YOUR_HOSTED_ZONE_ID -d YOUR_DOMAIN_
 | -p --profile        | :heavy_check_mark: | The IAM profile that is configured for use to interact with the target AWS account (optional, will use `default` if not set) |
 | -r --region         | :heavy_check_mark: | The region that the AWS SDK should operate in when running commands (optional, will use `ap-southeast-1` if not set)         |
 
-### `create-cron`
-
-Updates `cron` with a given expression [TODO]
-
-```bash
-npx simple-route53-ddns update-cron 
-```
