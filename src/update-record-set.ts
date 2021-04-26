@@ -41,14 +41,12 @@ export class UpdateRecordSet {
         this.getIpAddress();
 
         // Hard limit of five requests per second (per account).
-        await Promise.all(
-            this.options.domains.map(async (domain) => {
-                const action = await this.validateResourceRecordSet(domain);
-                if (action === 'UPSERT') {
-                    await this.pushRecordSet(domain);
-                }
-            })
-        );
+        for (const domain of this.options.domains) {
+            // const action = await this.validateResourceRecordSet(domain);
+            // if (action === 'UPSERT') {
+            await this.pushRecordSet(domain);
+            // }
+        }
     }
 
     private getIpAddress(): void {
@@ -86,57 +84,60 @@ export class UpdateRecordSet {
     /**
      * Searches if there is an existing record set with the same domain and type as the current update request
      */
-    public async validateResourceRecordSet(
-        domain: string
-    ): Promise<'COMPLETE' | 'UPSERT'> {
-        try {
-            const list = await this.route53Client
-                .listResourceRecordSets({
-                    HostedZoneId: this.options.hostedZoneId,
-                    StartRecordName: domain,
-                    StartRecordType: this.options.type
-                })
-                .promise();
+    // public async validateResourceRecordSet(
+    //     domain: string
+    // ): Promise<'COMPLETE' | 'UPSERT'> {
+    //     console.log(`domain`, domain);
+    //     try {
+    //         const list = await this.route53Client
+    //             .listResourceRecordSets({
+    //                 HostedZoneId: this.options.hostedZoneId,
+    //                 StartRecordName: domain,
+    //                 StartRecordType: this.options.type
+    //             })
+    //             .promise();
 
-            if (list.ResourceRecordSets.length > 0) {
-                const [resourceRecordSet] = list.ResourceRecordSets;
-                const [resourceRecord] =
-                    resourceRecordSet.ResourceRecords ?? [];
-                const { Value: currentIp } = resourceRecord ?? {};
+    //         console.log(`list`, JSON.stringify(list, undefined, 4));
 
-                if (currentIp === this.ip) {
-                    console.log(
-                        chalk.greenBright(
-                            `network public ip address is already the same as the one set in the target resource record, nothing further to do`
-                        )
-                    );
-                    return 'COMPLETE';
-                } else {
-                    console.log(
-                        chalk.yellowBright(
-                            `network public ip address is different from the one in the record set, will update the record set`
-                        )
-                    );
-                    return 'UPSERT';
-                }
-            } else {
-                console.log(
-                    chalk.yellowBright(
-                        `no existing record set in specified hosted zone, will create a new record set`
-                    )
-                );
-                return 'UPSERT';
-            }
-        } catch (e) {
-            console.log(
-                chalk.redBright(
-                    `Failed to obtain resource record sets for the given hosted zone`
-                ),
-                e
-            );
-            throw e;
-        }
-    }
+    //         if (list.ResourceRecordSets.length > 0) {
+    //             const [resourceRecordSet] = list.ResourceRecordSets;
+    //             const [resourceRecord] =
+    //                 resourceRecordSet.ResourceRecords ?? [];
+    //             const { Value: currentIp } = resourceRecord ?? {};
+
+    //             if (currentIp === this.ip) {
+    //                 console.log(
+    //                     chalk.greenBright(
+    //                         `network public ip address is already the same as the one set in the target resource record for ${domain}, nothing further to do`
+    //                     )
+    //                 );
+    //                 return 'COMPLETE';
+    //             } else {
+    //                 console.log(
+    //                     chalk.yellowBright(
+    //                         `network public ip address is different from the one in the record set for ${domain}, will update the record set`
+    //                     )
+    //                 );
+    //                 return 'UPSERT';
+    //             }
+    //         } else {
+    //             console.log(
+    //                 chalk.yellowBright(
+    //                     `no existing record set for ${domain} in specified hosted zone, will create a new record set`
+    //                 )
+    //             );
+    //             return 'UPSERT';
+    //         }
+    //     } catch (e) {
+    //         console.log(
+    //             chalk.redBright(
+    //                 `Failed to obtain resource record sets for the given hosted zone`
+    //             ),
+    //             e
+    //         );
+    //         throw e;
+    //     }
+    // }
 
     /**
      *
