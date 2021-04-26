@@ -26,7 +26,7 @@ The easiest way to invoke scripts in this module is via `npx`.
 Gets the current public ip address of your network and creates or updates a record set in the specified Hosted Zone in Route53.
 
 ```bash
-npx simple-route53-ddns update-record-set -h YOUR_HOSTED_ZONE_ID -d YOUR_DOMAIN_NAME [-t RECORD_SET_TYPE -l TTL -p YOUR_IAM_PROFILE -r YOUR_AWS_REGION]
+npx simple-route53-ddns update-record-set -h YOUR_HOSTED_ZONE_ID -d YOUR_DOMAIN_NAME_1 YOUR_DOMAIN_NAME_2 [-t RECORD_SET_TYPE -l TTL -p YOUR_IAM_PROFILE -r YOUR_AWS_REGION]
 ```
 
 | Option              | Required           | Description                                                                                                                                                                      |
