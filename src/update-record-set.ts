@@ -39,10 +39,16 @@ export class UpdateRecordSet {
 
     public async run(): Promise<void> {
         this.getIpAddress();
-        const action = await this.validateResourceRecordSet();
-        if (action === 'UPSERT') {
-            await this.pushRecordSet();
-        }
+
+        // Hard limit of five requests per second (per account).
+        await Promise.all(
+            this.options.domains.map(async (domain) => {
+                const action = await this.validateResourceRecordSet(domain);
+                if (action === 'UPSERT') {
+                    await this.pushRecordSet(domain);
+                }
+            })
+        );
     }
 
     private getIpAddress(): void {
@@ -80,12 +86,14 @@ export class UpdateRecordSet {
     /**
      * Searches if there is an existing record set with the same domain and type as the current update request
      */
-    public async validateResourceRecordSet(): Promise<'COMPLETE' | 'UPSERT'> {
+    public async validateResourceRecordSet(
+        domain: string
+    ): Promise<'COMPLETE' | 'UPSERT'> {
         try {
             const list = await this.route53Client
                 .listResourceRecordSets({
                     HostedZoneId: this.options.hostedZoneId,
-                    StartRecordName: this.options.domain,
+                    StartRecordName: domain,
                     StartRecordType: this.options.type
                 })
                 .promise();
@@ -133,7 +141,7 @@ export class UpdateRecordSet {
     /**
      *
      */
-    private async pushRecordSet(): Promise<void> {
+    private async pushRecordSet(domain: string): Promise<void> {
         try {
             if (typeof this.ip !== 'undefined') {
                 const result = await this.route53Client
@@ -147,7 +155,7 @@ export class UpdateRecordSet {
                                 {
                                     Action: 'UPSERT',
                                     ResourceRecordSet: {
-                                        Name: this.options.domain,
+                                        Name: domain,
                                         Type: this.options.type,
                                         TTL: Number(this.options.ttl),
                                         ResourceRecords: [
@@ -163,7 +171,9 @@ export class UpdateRecordSet {
                     .promise();
 
                 console.log(
-                    chalk.greenBright(`Resource record set has been changed!`),
+                    chalk.greenBright(
+                        `Resource record set for ${domain} has been created/updated!`
+                    ),
                     JSON.stringify(result.ChangeInfo, undefined, 4)
                 );
             } else {

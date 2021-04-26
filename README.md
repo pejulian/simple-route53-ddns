@@ -29,12 +29,14 @@ Gets the current public ip address of your network and creates or updates a reco
 npx simple-route53-ddns update-record-set -h YOUR_HOSTED_ZONE_ID -d YOUR_DOMAIN_NAME [-t RECORD_SET_TYPE -l TTL -p YOUR_IAM_PROFILE -r YOUR_AWS_REGION]
 ```
 
-| Option              | Required           | Description                                                                                                                  |
-| ------------------- | ------------------ | ---------------------------------------------------------------------------------------------------------------------------- |
-| -h --hosted-zone-id | :x:                | The hosted zone in Route53 where the record set will be created/updated                                                      |
-| -d --domain         | :x:                | Your domain name. Must be a FQDN                                                                                             |
-| -t --type           | :heavy_check_mark: | The DNS record set type to create/update (optional, will use `A` if not set)                                                 |
-| -l --ttl            | :heavy_check_mark: | The TTL (optional, will default to `60` seconds if not set)                                                                  |
-| -p --profile        | :heavy_check_mark: | The IAM profile that is configured for use to interact with the target AWS account (optional, will use `default` if not set) |
-| -r --region         | :heavy_check_mark: | The region that the AWS SDK should operate in when running commands (optional, will use `ap-southeast-1` if not set)         |
+| Option              | Required           | Description                                                                                                                                                                      |
+| ------------------- | ------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| -h --hosted-zone-id | :x:                | The hosted zone in Route53 where the record set will be created/updated                                                                                                          |
+| -d --domains        | :x:                | A space delimited list of domain names. Must be a FQDN or subdomain of the root FQDNA space delimited list of domain names. Must be a FQDN or subdomain of the root ~~FQDN~~~~~~ |
+| -t --type           | :heavy_check_mark: | The DNS record set type to create/update (optional, will use `A` if not set)                                                                                                     |
+| -l --ttl            | :heavy_check_mark: | The TTL (optional, will default to `60` seconds if not set)                                                                                                                      |
+| -p --profile        | :heavy_check_mark: | The IAM profile that is configured for use to interact with the target AWS account (optional, will use `default` if not set)                                                     |
+| -r --region         | :heavy_check_mark: | The region that the AWS SDK should operate in when running commands (optional, will use `ap-southeast-1` if not set)                                                             |
 
+
+> The Route53 AWS SDK has a hard limit of 5 concurrent/bulk operations per second per account. Consider running this command in batches if you have more than 5 domains to be updated.

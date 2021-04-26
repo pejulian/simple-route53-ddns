@@ -16,7 +16,10 @@ program
         `-h, --hosted-zone-id [value]`,
         `The hosted zone in Route53 where the record set will be created/updated`
     )
-    .requiredOption(`-d, --domain [value]`, `Your domain name. Must be a FQDN`)
+    .requiredOption(
+        `-d, --domains [value...]`,
+        `A space delimited list of domain names. Must be a FQDN or subdomain of the root FQDNA space delimited list of domain names. Must be a FQDN or subdomain of the root FQDN`
+    )
     .option(
         `-t, --type [value]`,
         `The DNS record set type to create/update (optional, will use "A" if not set)`,
