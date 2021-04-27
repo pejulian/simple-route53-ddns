@@ -17,8 +17,8 @@ program
         `The hosted zone in Route53 where the record set will be created/updated`
     )
     .requiredOption(
-        `-d, --domains [value...]`,
-        `A space delimited list of domain names. Must be a FQDN or subdomain of the root FQDNA space delimited list of domain names. Must be a FQDN or subdomain of the root FQDN`
+        `-d, --domain [value]`,
+        `The domain name. Must be a FQDN or subdomain of the root FQDN.`
     )
     .option(
         `-t, --type [value]`,

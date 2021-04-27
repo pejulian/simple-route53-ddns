@@ -7,9 +7,9 @@ export type UpdateRecordSetOptions = {
      */
     readonly hostedZoneId: string;
     /**
-     * An array of domain names. Must be a FQDN or subdomain of the root FQDNA space delimited list of domain names. Must be a FQDN or subdomain of the root FQDN
+     * The domain name. Must be a FQDN or subdomain of the root FQDN.
      */
-    readonly domains: Array<string>;
+    readonly domain: string;
     /**
      * The TTL (optional, will default to "60" seconds if not set)
      */
