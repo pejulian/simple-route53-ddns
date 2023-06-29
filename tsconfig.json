@@ -1,21 +1,29 @@
 {
+    "ts-node": {
+        "esm": true
+    },
     "compilerOptions": {
-        "target": "ES2015",
-        "module": "commonjs",
+        "target": "esnext",
+        "module": "esnext",
+        "moduleResolution": "node",
+        "allowSyntheticDefaultImports": true,
+        "strictFunctionTypes": true,
+        "alwaysStrict": true,
+        "noImplicitThis": true,
         "declaration": true,
         "declarationMap": true,
         "sourceMap": true,
         "outDir": "dist",
-        "removeComments": true,
+        "removeComments": false,
         "strict": true,
+        "noImplicitAny": true,
+        "strictNullChecks": true,
         "baseUrl": "./",
-        "typeRoots": [
-            "./node_modules/@types"
-        ],
+        "typeRoots": ["./node_modules/@types", "./types"],
         "esModuleInterop": true,
         "resolveJsonModule": true,
         "newLine": "lf"
     },
     "exclude": ["node_modules", "dist/**/*", "cdk.out/**/*", "scripts/**/*"],
-    "include": ["src/**/*.ts", "types/**/*.ts", "types/*.d.ts"]
+    "include": ["src/**/*.ts", "types/*.d.ts"]
 }

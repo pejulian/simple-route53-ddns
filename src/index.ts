@@ -1,8 +1,6 @@
-#!/usr/bin/env node
 import { version, name } from '../package.json';
 import { Command } from 'commander';
 import { UpdateRecordSet } from './update-record-set';
-import { UpdateRecordSetOptions } from 'types';
 
 const program = new Command();
 program.name(name).version(version);

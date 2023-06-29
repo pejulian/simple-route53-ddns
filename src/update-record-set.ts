@@ -1,13 +1,17 @@
-import { UpdateRecordSetOptions } from 'types';
-import AWS from 'aws-sdk';
 import chalk from 'chalk';
 import shelljs from 'shelljs';
 import validator from 'validator';
 import { name, version } from '../package.json';
+import { fromIni } from '@aws-sdk/credential-providers';
+import {
+    ChangeResourceRecordSetsCommand,
+    ListResourceRecordSetsCommand,
+    Route53Client
+} from '@aws-sdk/client-route-53';
 
 export class UpdateRecordSet {
     private readonly options: UpdateRecordSetOptions;
-    private readonly route53Client: AWS.Route53;
+    private readonly route53Client: Route53Client;
 
     private _ip: string | undefined;
 
@@ -16,15 +20,14 @@ export class UpdateRecordSet {
 
         console.log(chalk.cyan(`Running ${name}:UpdateRecordSet@${version}`));
 
-        const credentials = new AWS.SharedIniFileCredentials({
+        const credentials = fromIni({
             profile: this.options.profile
         });
 
-        AWS.config.credentials = credentials;
-
-        AWS.config.update({ region: this.options.region });
-
-        this.route53Client = new AWS.Route53();
+        this.route53Client = new Route53Client({
+            credentials,
+            region: this.options.region
+        });
 
         this.run();
     }
@@ -72,7 +75,7 @@ export class UpdateRecordSet {
         } catch (e) {
             console.log(
                 chalk.redBright(
-                    e.message ??
+                    (e as Error).message ??
                         `An error occured when curl(ing) http://checkip.amazonaws.com/`
                 ),
                 e
@@ -88,15 +91,15 @@ export class UpdateRecordSet {
         domain: string
     ): Promise<'COMPLETE' | 'UPSERT'> {
         try {
-            const list = await this.route53Client
-                .listResourceRecordSets({
-                    HostedZoneId: this.options.hostedZoneId,
-                    StartRecordName: domain,
-                    StartRecordType: this.options.type
-                })
-                .promise();
+            const command = new ListResourceRecordSetsCommand({
+                HostedZoneId: this.options.hostedZoneId,
+                StartRecordName: domain,
+                StartRecordType: this.options.type
+            });
 
-            if (list.ResourceRecordSets.length > 0) {
+            const list = await this.route53Client.send(command);
+
+            if (list.ResourceRecordSets) {
                 const [resourceRecordSet] = list.ResourceRecordSets;
                 const [resourceRecord] =
                     resourceRecordSet.ResourceRecords ?? [];
@@ -137,36 +140,37 @@ export class UpdateRecordSet {
     }
 
     /**
-     *
+     * If an IP address is available, insert or update the specified record type in the hosted zone
+     * with the IP address.
      */
     private async pushRecordSet(domain: string): Promise<void> {
         try {
             if (typeof this.ip !== 'undefined') {
-                const result = await this.route53Client
-                    .changeResourceRecordSets({
-                        HostedZoneId: this.options.hostedZoneId,
-                        ChangeBatch: {
-                            Comment: `Updating public ip ${
-                                this.ip
-                            } to resource record set at ${new Date().toUTCString()}`,
-                            Changes: [
-                                {
-                                    Action: 'UPSERT',
-                                    ResourceRecordSet: {
-                                        Name: domain,
-                                        Type: this.options.type,
-                                        TTL: Number(this.options.ttl),
-                                        ResourceRecords: [
-                                            {
-                                                Value: this.ip
-                                            }
-                                        ]
-                                    }
+                const command = new ChangeResourceRecordSetsCommand({
+                    HostedZoneId: this.options.hostedZoneId,
+                    ChangeBatch: {
+                        Comment: `Updating public ip ${
+                            this.ip
+                        } to resource record set at ${new Date().toUTCString()}`,
+                        Changes: [
+                            {
+                                Action: 'UPSERT',
+                                ResourceRecordSet: {
+                                    Name: domain,
+                                    Type: this.options.type,
+                                    TTL: Number(this.options.ttl),
+                                    ResourceRecords: [
+                                        {
+                                            Value: this.ip
+                                        }
+                                    ]
                                 }
-                            ]
-                        }
-                    })
-                    .promise();
+                            }
+                        ]
+                    }
+                });
+
+                const result = await this.route53Client.send(command);
 
                 console.log(
                     chalk.greenBright(
