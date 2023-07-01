@@ -9,6 +9,8 @@ import esbuild, { BuildOptions } from 'esbuild';
 
 const commonArgs: BuildOptions = {
     entryPoints: ['./src/index.ts'],
+    minifySyntax: true,
+    mangleQuoted: true,
     logLevel: 'info',
     platform: 'node',
     mainFields: ['module', 'main'],
@@ -19,7 +21,7 @@ const commonArgs: BuildOptions = {
     minify: true,
     plugins: [
         nodeExternalsPlugin({
-            allowList: [...Object.keys(packageJson.dependencies)]
+            //         allowList: [...Object.keys(packageJson.dependencies)]
         })
     ],
     banner: {
@@ -41,7 +43,7 @@ const commonArgs: BuildOptions = {
 const esmBuild = esbuild.build({
     ...commonArgs,
     tsconfig: './tsconfig.esm.json',
-    target: 'esnext',
+    target: 'es2020',
     format: 'esm',
     outdir: './dist',
     outExtension: {

@@ -40,3 +40,20 @@ type UpdateRecordSetOptions = Readonly<{
      */
     region: string;
 }>;
+
+declare namespace NodeJS {
+    export interface ProcessEnv {
+        /**
+         * The name of this node module as defined in package.json
+         */
+        readonly MODULE_NAME: string;
+        /**
+         * The version of this node module as defined in package.json
+         */
+        readonly MODULE_VERSION: string;
+        /**
+         * The description of this node module as defined in package.json
+         */
+        readonly MODULE_DESCRIPTION: string;
+    }
+}

@@ -1,9 +1,8 @@
-import { version, name } from '../package.json';
 import { Command } from 'commander';
 import { UpdateRecordSet } from './update-record-set';
 
 const program = new Command();
-program.name(name).version(version);
+program.name(process.env.MODULE_NAME).version(process.env.MODULE_VERSION);
 
 program
     .command(`update-record-set`)

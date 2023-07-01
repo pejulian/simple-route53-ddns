@@ -1,7 +1,6 @@
 import chalk from 'chalk';
 import shelljs from 'shelljs';
 import validator from 'validator';
-import { name, version } from '../package.json';
 import { fromIni } from '@aws-sdk/credential-providers';
 import {
     ChangeResourceRecordSetsCommand,
@@ -18,7 +17,11 @@ export class UpdateRecordSet {
     constructor(options: UpdateRecordSetOptions) {
         this.options = options;
 
-        console.log(chalk.cyan(`Running ${name}:UpdateRecordSet@${version}`));
+        console.log(
+            chalk.cyan(
+                `Running ${process.env.MODULE_NAME}:UpdateRecordSet@${process.env.MODULE_VERSION}`
+            )
+        );
 
         const credentials = fromIni({
             profile: this.options.profile
