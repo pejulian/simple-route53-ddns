@@ -1,7 +1,7 @@
 {
     "name": "@pejulian/simple-route53-ddns",
     "type": "module",
-    "version": "0.0.6-beta.1",
+    "version": "0.0.0",
     "description": "npm module containing a cron friendly script to get your machine's ip address and update it as a record set in the specified hosted zone in AWS Route53",
     "engines": {
         "node": ">=18",
@@ -27,8 +27,8 @@
         "prettier:format": "prettier --write ./src/**/*.ts",
         "prettier:check": "prettier --list-different ./src/**/*.ts",
         "prepare": "husky install",
-        "publish:beta": "npm run update-beta-version && npm publish --tag beta",
-        "publish:latest": "npm run update-version && npm publish --tag latest",
+        "publish:beta": "npm run update-beta-version && npm publish --tag beta --access=public",
+        "publish:latest": "npm run update-version && npm publish --tag latest --access=public",
         "update-beta-version": "npx ts-node ./scripts/npm-update-beta-version.ts",
         "update-version": "npx ts-node ./scripts/npm-update-version.ts"
     },
