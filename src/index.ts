@@ -18,6 +18,10 @@ program
         `The domain name. Must be a FQDN or subdomain of the root FQDN.`
     )
     .option(
+        `-i, --ip [value]`,
+        `The IP address to set as the value of the record set created (NOTE: Setting this will override the internal IP lookup mechanism)`
+    )
+    .option(
         `-t, --type [value]`,
         `The DNS record set type to create/update (optional, will use "A" if not set)`,
         'A'

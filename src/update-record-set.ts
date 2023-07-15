@@ -57,23 +57,38 @@ export class UpdateRecordSet {
 
     private getIpAddress(): void {
         try {
-            const { stdout } = shelljs.exec(
-                `curl http://checkip.amazonaws.com/`
-            );
-
-            const maybeIp = stdout.trim().replace('\n', '');
-
-            if (validator.isIP(maybeIp, '4')) {
-                this.ip = maybeIp;
-                console.log(
-                    chalk.greenBright(
-                        `The current public ip address of this network is: ${this.ip}`
-                    )
-                );
+            if (this.options.ip) {
+                if (validator.isIP(this.options.ip, '4')) {
+                    this.ip = maybeIp;
+                    console.log(
+                        chalk.greenBright(
+                            `The user supplied ip address is: ${this.ip}`
+                        )
+                    );
+                } else {
+                    throw new Error(
+                        `Could not apply the user supplied ip address!`
+                    );
+                }
             } else {
-                throw new Error(
-                    `Could not resolve public ip address of the current network!`
+                const { stdout } = shelljs.exec(
+                    `curl http://checkip.amazonaws.com/`
                 );
+
+                const maybeIp = stdout.trim().replace('\n', '');
+
+                if (validator.isIP(maybeIp, '4')) {
+                    this.ip = maybeIp;
+                    console.log(
+                        chalk.greenBright(
+                            `The current public ip address of this network is: ${this.ip}`
+                        )
+                    );
+                } else {
+                    throw new Error(
+                        `Could not resolve public ip address of the current network!`
+                    );
+                }
             }
         } catch (e) {
             console.log(

@@ -11,6 +11,10 @@ type UpdateRecordSetOptions = Readonly<{
      */
     domain: string;
     /**
+     * The IP address to set as the value of the record set created (NOTE: Setting this will override the internal IP lookup mechanism).
+     */
+    ip?: string;
+    /**
      * The TTL (optional, will default to "60" seconds if not set)
      */
     ttl: string;
