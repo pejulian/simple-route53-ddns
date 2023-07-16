@@ -59,7 +59,7 @@ export class UpdateRecordSet {
         try {
             if (this.options.ip) {
                 if (validator.isIP(this.options.ip, '4')) {
-                    this.ip = maybeIp;
+                    this.ip = this.options.ip;
                     console.log(
                         chalk.greenBright(
                             `The user supplied ip address is: ${this.ip}`
