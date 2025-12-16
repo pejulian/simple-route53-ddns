@@ -32,7 +32,7 @@ npx @pejulian/simple-route53-ddns update-record-set -h YOUR_HOSTED_ZONE_ID -d YO
 | Option              | Required           | Description                                                                                                                      |
 | ------------------- | ------------------ | -------------------------------------------------------------------------------------------------------------------------------- |
 | -h --hosted-zone-id | :heavy_check_mark: | The hosted zone in Route53 where the record set will be created/updated                                                          |
-| -d --domain         | :heavy_check_mark: | The domain name. Must be a FQDN or subdomain of the root FQDN.                                                                   |
+| -d --domains        | :heavy_check_mark: | Comma delimited list of domain names. Each entry must be a FQDN or subdomain of the root FQDN.                                   |
 | -i --ip             | :x:                | The IP address to set as the value of the record set created (NOTE: Setting this will override the internal IP lookup mechanism) |
 | -t --type           | :x:                | The DNS record set type to create/update (optional, will use `A` if not set)                                                     |
 | -l --ttl            | :x:                | The TTL (optional, will default to `60` seconds if not set)                                                                      |
