@@ -1,11 +1,8 @@
 {
-    "ts-node": {
-        "esm": true
-    },
     "compilerOptions": {
-        "target": "esnext",
+        "target": "es2022",
         "module": "esnext",
-        "moduleResolution": "node",
+        "moduleResolution": "bundler",
         "allowSyntheticDefaultImports": true,
         "strictFunctionTypes": true,
         "alwaysStrict": true,

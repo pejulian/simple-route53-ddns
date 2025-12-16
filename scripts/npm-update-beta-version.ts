@@ -1,8 +1,4 @@
-const packageJson = (
-    await import('../package.json', {
-        assert: { type: 'json' }
-    })
-).default;
+import packageJson from '../package.json' with { type: 'json' };
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { writeFileSync } from 'fs';
@@ -48,6 +44,7 @@ async function run() {
                 packageJson.version = suggestedVersion;
             }
         }
+        // eslint-disable-next-line
     } catch (e) {
         const suggestedBetaVersion = semver.inc(
             packageJson.version,

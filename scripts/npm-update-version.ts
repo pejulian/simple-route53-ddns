@@ -1,9 +1,4 @@
-const packageJson = (
-    await import('../package.json', {
-        assert: { type: 'json' }
-    })
-).default;
-
+import packageJson from '../package.json' with { type: 'json' };
 import { writeFileSync } from 'fs';
 import { fileURLToPath } from 'url';
 import { exec } from 'child-process-promise';

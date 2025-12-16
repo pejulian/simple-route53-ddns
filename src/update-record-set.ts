@@ -120,7 +120,7 @@ export class UpdateRecordSet {
             if (list.ResourceRecordSets) {
                 const [resourceRecordSet] = list.ResourceRecordSets;
                 const [resourceRecord] =
-                    resourceRecordSet.ResourceRecords ?? [];
+                    resourceRecordSet?.ResourceRecords ?? [];
                 const { Value: currentIp } = resourceRecord ?? {};
 
                 if (currentIp === this.ip) {
