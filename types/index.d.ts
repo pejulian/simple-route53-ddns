@@ -7,7 +7,7 @@ type UpdateRecordSetOptions = Readonly<{
      */
     hostedZoneId: string;
     /**
-     * Space delimited string of domain names. Each entry must be a FQDN or subdomain of the root FQDN.
+     * Comma delimited string of domain names. Each entry must be a FQDN or subdomain of the root FQDN.
      */
     domains: Array<string>;
     /**

@@ -1,7 +1,7 @@
 {
     "name": "@pejulian/simple-route53-ddns",
     "type": "module",
-    "version": "0.0.20",
+    "version": "0.0.21",
     "description": "npm module containing a cron friendly script to get your machine's ip address and update it as a record set in the specified hosted zone in AWS Route53",
     "files": [
         "dist"

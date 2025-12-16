@@ -15,8 +15,8 @@ program
     )
     .requiredOption(
         `-d, --domains <values>`,
-        `Space delimited list of domain names. Every entry must be a FQDN or subdomain of the root FQDN.`,
-        (value) => value.split(' ')
+        `Comma delimited list of domain names. Every entry must be a FQDN or subdomain of the root FQDN.`,
+        (value) => value.split(',')
     )
     .option(
         `-i, --ip [value]`,
