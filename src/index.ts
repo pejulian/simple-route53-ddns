@@ -14,8 +14,9 @@ program
         `The hosted zone in Route53 where the record set will be created/updated`
     )
     .requiredOption(
-        `-d, --domain [value]`,
-        `The domain name. Must be a FQDN or subdomain of the root FQDN.`
+        `-d, --domains <values>`,
+        `Space delimited list of domain names. Every entry must be a FQDN or subdomain of the root FQDN.`,
+        (value) => value.split(' ')
     )
     .option(
         `-i, --ip [value]`,

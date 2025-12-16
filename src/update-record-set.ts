@@ -47,11 +47,12 @@ export class UpdateRecordSet {
         this.getIpAddress();
 
         // Hard limit of five requests per second (per account).
-        const action = await this.validateResourceRecordSet(
-            this.options.domain
-        );
-        if (action === 'UPSERT') {
-            await this.pushRecordSet(this.options.domain);
+        for await (const domain of this.options.domains) {
+            const action = await this.validateResourceRecordSet(domain);
+
+            if (action === 'UPSERT') {
+                await this.pushRecordSet(domain);
+            }
         }
     }
 

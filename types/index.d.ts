@@ -7,9 +7,9 @@ type UpdateRecordSetOptions = Readonly<{
      */
     hostedZoneId: string;
     /**
-     * The domain name. Must be a FQDN or subdomain of the root FQDN.
+     * Space delimited string of domain names. Each entry must be a FQDN or subdomain of the root FQDN.
      */
-    domain: string;
+    domains: Array<string>;
     /**
      * The IP address to set as the value of the record set created (NOTE: Setting this will override the internal IP lookup mechanism).
      */
