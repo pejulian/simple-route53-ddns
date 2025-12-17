@@ -47,11 +47,14 @@ export class UpdateRecordSet {
         this.getIpAddress();
 
         // Hard limit of five requests per second (per account).
-        for await (const domain of this.options.domains) {
-            const action = await this.validateResourceRecordSet(domain);
+        for await (const checkDomain of this.options.domains) {
+            const domainActions =
+                await this.validateResourceRecordSet(checkDomain);
 
-            if (action === 'UPSERT') {
-                await this.pushRecordSet(domain);
+            for (const [domain, action] of Object.entries(domainActions)) {
+                if (action === 'UPSERT') {
+                    await this.pushRecordSet(domain);
+                }
             }
         }
     }
@@ -108,7 +111,9 @@ export class UpdateRecordSet {
      */
     public async validateResourceRecordSet(
         domain: string
-    ): Promise<'COMPLETE' | 'UPSERT'> {
+    ): Promise<Record<string, 'COMPLETE' | 'UPSERT'>> {
+        const domainOperationMap: Record<string, 'COMPLETE' | 'UPSERT'> = {};
+
         try {
             const command = new ListResourceRecordSetsCommand({
                 HostedZoneId: this.options.hostedZoneId,
@@ -119,25 +124,40 @@ export class UpdateRecordSet {
             const list = await this.route53Client.send(command);
 
             if (list.ResourceRecordSets) {
-                const [resourceRecordSet] = list.ResourceRecordSets;
-                const [resourceRecord] =
-                    resourceRecordSet?.ResourceRecords ?? [];
-                const { Value: currentIp } = resourceRecord ?? {};
+                const matchedDomainRecordSet = list.ResourceRecordSets.find(
+                    (resourceRecordSet) =>
+                        this.stripTrailingDot(resourceRecordSet.Name) === domain
+                );
 
-                if (currentIp === this.ip) {
-                    console.log(
-                        chalk.greenBright(
-                            `network public ip address is already the same as the one set in the target resource record for ${domain}, nothing further to do`
-                        )
-                    );
-                    return 'COMPLETE';
+                if (!matchedDomainRecordSet) {
+                    domainOperationMap[domain] = 'UPSERT';
                 } else {
-                    console.log(
-                        chalk.yellowBright(
-                            `network public ip address is different from the one in the record set for ${domain}, will update the record set`
-                        )
-                    );
-                    return 'UPSERT';
+                    for (const resourceRecordSet of list.ResourceRecordSets.filter(
+                        (resourceRecordSet) =>
+                            typeof resourceRecordSet.ResourceRecords !==
+                            'undefined'
+                    )) {
+                        for (const resourceRecord of resourceRecordSet?.ResourceRecords ??
+                            []) {
+                            const { Value: currentIp } = resourceRecord ?? {};
+
+                            if (currentIp === this.ip) {
+                                console.log(
+                                    chalk.greenBright(
+                                        `network public ip address is already the same as the one set in the target resource record for ${domain}, nothing further to do`
+                                    )
+                                );
+                                domainOperationMap[domain] = 'COMPLETE';
+                            } else {
+                                console.log(
+                                    chalk.yellowBright(
+                                        `network public ip address is different from the one in the record set for ${domain}, will update the record set`
+                                    )
+                                );
+                                domainOperationMap[domain] = 'UPSERT';
+                            }
+                        }
+                    }
                 }
             } else {
                 console.log(
@@ -145,8 +165,10 @@ export class UpdateRecordSet {
                         `no existing record set for ${domain} in specified hosted zone, will create a new record set`
                     )
                 );
-                return 'UPSERT';
+                domainOperationMap[domain] = 'UPSERT';
             }
+
+            return domainOperationMap;
         } catch (e) {
             console.log(
                 chalk.redBright(
@@ -213,5 +235,9 @@ export class UpdateRecordSet {
             );
             throw e;
         }
+    }
+
+    private stripTrailingDot(fqdn?: string): string | undefined {
+        return fqdn?.endsWith('.') ? fqdn.slice(0, -1) : fqdn;
     }
 }
